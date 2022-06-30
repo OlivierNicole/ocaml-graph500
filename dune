@@ -1,0 +1,2 @@
+(executables
+	(names kronecker kernel1 kernel2 kernel3))
