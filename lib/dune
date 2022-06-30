@@ -1,0 +1,17 @@
+(library
+  (name generate)
+  (modules generate)
+  (libraries types)
+)
+
+(library
+  (name types)
+  (modules types)
+  (modules_without_implementation types)
+)
+
+(library
+  (name sparseGraph)
+  (modules sparseGraph)
+  (libraries types)
+)

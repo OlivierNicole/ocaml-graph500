@@ -1,0 +1,5 @@
+(executable
+  (name kernel1)
+  (modules kernel1)
+  (libraries generate sparseGraph unix)
+)
