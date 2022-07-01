@@ -13,5 +13,5 @@
 (library
   (name sparseGraph)
   (modules sparseGraph)
-  (libraries types)
+  (libraries types lockfree)
 )

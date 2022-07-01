@@ -57,7 +57,7 @@ let permute : 'a array -> 'a array = fun ar ->
   Array.sort (fun (a,_) (b,_) -> compare a b) with_random_int;
   Array.map (fun (_,x) -> x) with_random_int
 
-let computeNumber scale edge_factor =
+let compute_number scale edge_factor =
   let n = int_of_float (2. ** float_of_int scale) in
   let m = edge_factor * n in
   (n, m)
@@ -71,16 +71,21 @@ let permutation (n : int) : int -> int =
 (* Generates a matrix with 3 rows and M columns. Each column represents an edge
    as the vector (start vertex, end vertex, weight). *)
 let kronecker scale edge_factor : (vertex * vertex * weight) array =
-  let n, m = computeNumber scale edge_factor in
+  let n, m = compute_number scale edge_factor in
   let a, b, c = (0.57, 0.19, 0.19) in
   let ab = a +. b in
   let c_norm = c /. (1. -. (a +. b)) in
   let a_norm = a /. (a +. b) in
   let fst_row, snd_row, weights = compute_ijw m ab a_norm c_norm scale in
+  (* Switch from edge labels starting at 1 to edge labels starting at 0 *)
+  let fst_row = Array.map pred fst_row in
+  let snd_row = Array.map pred snd_row in
+  (* Permute start and end vertices  *)
   let p = permutation n in
   let fst_row = Array.map p fst_row in
   let snd_row = Array.map p snd_row in
   let edges = Array.init m @@ fun i -> fst_row.(i), snd_row.(i), weights.(i) in
+  (* Permute edges *)
   permute edges
 
 let go ~scale ~edge_factor =

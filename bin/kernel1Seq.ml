@@ -1,12 +1,12 @@
 (* Kernel 1 is a basic construction of an adjacency HashMap for undirected
    graphs which corresponds to a sparse graph implementation.
-   INPUTS : ijw and m which have been derived from the Kronecker product. *)
+   INPUTS : an array of edges as (start vertex, end vertex, weight) tuples. *)
 
 open Types
 
 let scale = try int_of_string Sys.argv.(1) with _ -> 12
 
-let edge_factor = try int_of_string Sys.argv.(2) with _ -> 10
+let edge_factor = try int_of_string Sys.argv.(2) with _ -> 16
 
 (* Ensure that for every edge (start, end), start > end, swapping start and
    end if necessary. Remove self-loops. Also returns the maximum edge label. *)
@@ -22,8 +22,6 @@ let normalize : edge array -> edge array * vertex = fun edges ->
   in
   Array.of_list (List.rev edges), max_label
 
-(* The two functions constructionAdjHash and kernel1 are the main
-   functions driving all the other functions. *)
 let build_sparse ~max_edge_label ar =
   let g = SparseGraph.create (max_edge_label + 1) in
   ar |> Array.iter (fun (s,e,w) ->
