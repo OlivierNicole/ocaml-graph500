@@ -15,3 +15,15 @@
   (modules sparseGraph)
   (libraries types lockfree)
 )
+
+(library
+  (name kernel1Seq)
+  (modules kernel1Seq)
+  (libraries generate sparseGraph unix)
+)
+
+(library
+  (name kernel1Par)
+  (modules kernel1Par)
+  (libraries generate sparseGraph unix domainslib)
+)

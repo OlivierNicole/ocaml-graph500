@@ -1,0 +1,4 @@
+(test
+  (name kernel1Seq)
+  (libraries types generate kernel1Seq qcheck unix)
+)

@@ -1,5 +1,0 @@
-(executable
-  (name kernel1Seq)
-  (modules kernel1Seq)
-  (libraries generate sparseGraph unix)
-)
