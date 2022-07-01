@@ -1,1 +1,24 @@
 Parallel version of <https://github.com/ocaml-bench/sandmark/tree/868880340e4bfbc9f71254c6779dc070f6c4b167/benchmarks/graph500seq>.
+
+Graph500 benchmark reference: <https://graph500.org/?page_id=12>.
+
+## Usage
+
+This is the result of a two day's hacking so it's a bit messy.
+
+`bin/gen.exe` generates a list of graph edges given a “scale” and an edge factor
+(see Graph500 reference) and dumps it to a file. It's not very efficient and
+single-core. To give an idea, a scale of 21 and an edge factor of 16 yields a
+~700 MB file.
+
+As of now, only the kernels no. 1 and 2 are implemented. They are in the form of
+libraries in `lib/`, for ease of use in OCaml code.
+
+There is a number of test executables:
+- `test/kernel1Seq.exe` generates a list of edges and runs kernel 1 on it,
+  using only one OCaml domain (outdated).
+- `test/kernel1Par.exe` generates a list of edges and runs kernel 1 on it. It
+  takes a number of parameters, including the number of OCaml domains to use.
+- `test/kernel2Par.exe` reads a list of edges from a file, then runs kernels 1
+  and 2 on it in sequence, with some printing and validation of the results. It
+  takes a number of parameters, including the number of domains.
