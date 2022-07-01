@@ -45,7 +45,7 @@ let () =
   Random.init 42;
   Arg.parse speclist
     (fun s -> filename := s)
-    "kernel1Seq [-scale <SCALE>] [-edgefactor <edge factor>] [-nocheck]";
+    "kernel2Par [-nocheck] <edge list file>";
   if !filename = "" then begin
     Printf.eprintf "Must provide graph file argument.\n"; exit 1
   end;
