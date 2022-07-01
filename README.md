@@ -1,6 +1,5 @@
-Parallel version of <https://github.com/ocaml-bench/sandmark/tree/868880340e4bfbc9f71254c6779dc070f6c4b167/benchmarks/graph500seq>.
-
-Graph500 benchmark reference: <https://graph500.org/?page_id=12>.
+Parallel implementation of the [Graph500
+benchmark](https://graph500.org/?page_id=12) in OCaml.
 
 ## Usage
 
