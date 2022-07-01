@@ -6,7 +6,6 @@ open Types
 
 (* Ensure that for every edge (start, end), start > end, swapping start and
    end if necessary. Remove self-loops. Also returns the maximum edge label. *)
-(* Edit: in fact this seems unnecessary. *)
 let _normalize : edge array -> edge array * vertex = fun edges ->
   let edges, max_label = Array.fold_left
       (fun (edges, max_label) (s,e,w) ->
@@ -19,16 +18,23 @@ let _normalize : edge array -> edge array * vertex = fun edges ->
   in
   Array.of_list (List.rev edges), max_label
 
-let build_sparse ~scale ar =
-  let g = SparseGraph.create ~scale in
-  ar |> Array.iter (fun (s,e,w) ->
-      if not (s = e) then begin (* We remove self-loops *)
-        SparseGraph.add_edge (s,e,w) g;
-        SparseGraph.add_edge (e,s,w) g;
-      end);
+module T = Domainslib.Task
+
+let max_vertex_label ~pool edges =
+  T.parallel_for_reduce ~start:0 ~finish:(Array.length edges - 1)
+    ~body:(fun i -> let (s,e,_) = edges.(i) in max s e) pool max (-1)
+
+let build_sparse ~pool ar =
+  let max_vertex_label = max_vertex_label ~pool ar in
+  let g = SparseGraph.create ~max_vertex_label in
+  T.parallel_for pool ~start:0 ~finish:(Array.length ar - 1) ~body:(fun i ->
+    let (s,e,w) = ar.(i) in
+    if not (s = e) then begin (* We remove self-loops *)
+      SparseGraph.add_edge (s,e,w) g;
+      SparseGraph.add_edge (e,s,w) g;
+    end;
+  );
   g
 
-(* TODO: Normally [kernel1] is only allowed to know the list of edges, not
-   [scale]. *)
-let kernel1 ~scale edges =
-  build_sparse ~scale edges
+let kernel1 ~pool edges =
+  build_sparse ~pool edges

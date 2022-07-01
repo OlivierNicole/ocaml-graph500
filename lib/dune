@@ -27,3 +27,9 @@
   (modules kernel1Par)
   (libraries generate sparseGraph unix domainslib)
 )
+
+(library
+  (name kernel2Par)
+  (modules kernel2Par)
+  (libraries sparseGraph domainslib)
+)

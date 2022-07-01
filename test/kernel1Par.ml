@@ -1,13 +1,13 @@
 let run_prop_test = ref true
-
 let scale = ref 12
-
 let edge_factor = ref 16
+let num_domains = ref 1
 
 let speclist =
   [ ("-nocheck", Arg.Clear run_prop_test, "Run property-based checks");
     ("-scale", Arg.Set_int scale, "SCALE");
     ("-edgefactor", Arg.Set_int edge_factor, "edge factor");
+    ("-ndomains", Arg.Set_int num_domains, "number of domains");
   ]
 
 let destinations_included ~edges ~sparse start =
@@ -22,6 +22,8 @@ let destinations_included ~edges ~sparse start =
 
 let twopow x = 1 lsl x
 
+module T = Domainslib.Task
+
 let () =
   Random.self_init ();
   Arg.parse speclist
@@ -32,9 +34,11 @@ let () =
   let edges = Generate.go ~scale ~edge_factor in
   Printf.printf "Generated. Building sparse representation...\n%!";
   ignore @@ read_line ();
+  let pool = T.setup_pool ~num_additional_domains:(!num_domains-1) () in
   let t0 = Unix.gettimeofday () in
-  let sparse = Kernel1Seq.kernel1 ~scale edges in
+  let sparse = T.run pool @@ fun () -> Kernel1Par.kernel1 ~pool edges in
   let t1 = Unix.gettimeofday () in
+  T.teardown_pool pool;
   Printf.printf "Done. Time: %f\n" (t1 -. t0);
   if !run_prop_test then begin
     Printf.printf "Doing some checks...\n%!";

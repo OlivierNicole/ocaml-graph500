@@ -1,4 +1,17 @@
 (test
   (name kernel1Seq)
+  (modules kernel1Seq)
   (libraries types generate kernel1Seq qcheck unix)
+)
+
+(test
+  (name kernel1Par)
+  (modules kernel1Par)
+  (libraries types generate kernel1Par qcheck unix domainslib)
+)
+
+(test
+  (name kernel2Par)
+  (modules kernel2Par)
+  (libraries types generate kernel1Par kernel2Par unix domainslib qcheck)
 )

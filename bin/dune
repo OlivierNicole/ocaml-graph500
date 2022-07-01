@@ -1,0 +1,5 @@
+(executable
+  (name gen)
+  (modules gen)
+  (libraries generate kernel1Par unix)
+)

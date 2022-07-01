@@ -3,9 +3,14 @@ open Types
 type t
 
 (** Create a sparse graph representation able to contain vertices with labels
-    in [0, 2^scale-1]. Note that this data structure becomes {i incorrect} if
-      vertices with greater labels are used! *)
-val create : scale:int -> t
+    lesser than or equal to [max_vertex_label]. *)
+val create : max_vertex_label:int -> t
 
 val add_edge : edge -> t -> unit
+
 val from : vertex -> t -> (vertex * weight) list
+
+val max_vertex_label : t -> vertex
+
+(** Return a random vertex from the graph of degree at least 1. *)
+val sample_vertex : t -> vertex
