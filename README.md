@@ -13,6 +13,10 @@ single-core. To give an idea, a scale of 21 and an edge factor of 16 yields a
 As of now, only the kernels no. 1 and 2 are implemented. They are in the form of
 libraries in `lib/`, for ease of use in OCaml code.
 
+**Note:** I realized that kernel 2 (`lib/kernel2Par.ml`) does not respect the
+specifications of the Graph500 benchmark, as the spanning tree that it
+outputs has no guarantee to be a BFS tree.
+
 There is a number of test executables:
 - `test/kernel1Seq.exe` generates a list of edges and runs kernel 1 on it,
   using only one OCaml domain (outdated).
