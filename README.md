@@ -13,6 +13,11 @@ single-core. To give an idea, a scale of 21 and an edge factor of 16 yields a
 As of now, only the kernels no. 1 and 2 are implemented. They are in the form of
 libraries in `lib/`, for ease of use in OCaml code.
 
+Kernel no. 1 scales very well with the number of cores (in fact, I even observed
+a supralinear speedup with 4 cores), while as of now kernel no. 2 scales very
+poorly.
+
+
 **Note:** I realized that kernel 2 (`lib/kernel2Par.ml`) does not respect the
 specifications of the Graph500 benchmark, as the spanning tree that it
 outputs has no guarantee to be a BFS tree.
