@@ -42,7 +42,7 @@ let sample_and_bfs ~pool sparse root =
   end
 
 let () =
-  Random.init 42;
+  Random.self_init ();
   Arg.parse speclist
     (fun s -> filename := s)
     "kernel2Par [-nocheck] <edge list file>";

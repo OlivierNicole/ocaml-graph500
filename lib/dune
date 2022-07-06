@@ -1,7 +1,7 @@
 (library
   (name generate)
   (modules generate)
-  (libraries types)
+  (libraries types domainslib)
 )
 
 (library
@@ -14,12 +14,6 @@
   (name sparseGraph)
   (modules sparseGraph)
   (libraries types lockfree)
-)
-
-(library
-  (name kernel1Seq)
-  (modules kernel1Seq)
-  (libraries generate sparseGraph unix)
 )
 
 (library

@@ -1,4 +1,5 @@
-(*Kronecker is using the following algorithm :
+(* We use the following algorithm (Kronecker generator, see Graph500
+   specification):
  Function Kronecker generator(scale, edgefactor) :
  	N = 2^scale
  	M = edgefactor * N (No of edges)
@@ -26,57 +27,52 @@
 	Here, the labels are from 0 to N-1.
 *)
 
-let gen_ii_bit ~length ~ab =
-  Array.init length @@ fun _ -> Random.float 1. > ab
-
-let gen_jj_bit ~ii_bit ~length ~a_norm ~c_norm =
-  Array.init length @@ fun i ->
-    Random.float 1. > (if ii_bit.(i) then c_norm else a_norm)
-
 open Types
 
 (* [twopow x] is 2 to the power [x]. *)
 let twopow x = 1 lsl x
 
-let compute_ijw m ab a_norm c_norm scale
+module T = Domainslib.Task
+
+let compute_ijw ~pool m ab a_norm c_norm scale
     : vertex array * vertex array * float array =
   let fst_row = Array.make m 1 in
   let snd_row = Array.make m 1 in
   for ib = 1 to scale do
-    let ii_bit = gen_ii_bit ~length:m ~ab in
-    let jj_bit = gen_jj_bit ~ii_bit ~length:m ~a_norm ~c_norm in
-    for i = 0 to m - 1 do
-      if ii_bit.(i) then fst_row.(i) <- fst_row.(i) + twopow (ib-1);
-      if jj_bit.(i) then snd_row.(i) <- snd_row.(i) + twopow (ib-1);
-    done;
+    T.parallel_for pool ~start:0 ~finish:(m - 1) ~body:(fun i ->
+      let ii_bit = Random.float 1. > ab in
+      let jj_bit = Random.float 1. > (if ii_bit then c_norm else a_norm) in
+      if ii_bit then fst_row.(i) <- fst_row.(i) + twopow (ib-1);
+      if jj_bit then snd_row.(i) <- snd_row.(i) + twopow (ib-1);
+    );
   done;
   fst_row, snd_row, Array.init m (fun _ -> Random.float 1.)
 
 let permute : 'a array -> 'a array = fun ar ->
   let with_random_int = Array.map (fun x -> Random.bits (), x) ar in
-  Array.sort (fun (a,_) (b,_) -> compare a b) with_random_int;
+  Array.fast_sort (fun (a,_) (b,_) -> compare a b) with_random_int;
   Array.map (fun (_,x) -> x) with_random_int
 
 let compute_number scale edge_factor =
-  let n = int_of_float (2. ** float_of_int scale) in
+  let n = twopow scale in
   let m = edge_factor * n in
   (n, m)
 
-(* Permutation function in [0,n]. *)
+(* Random permutation function in [0, n-1] -> [0, n-1]. *)
 let permutation (n : int) : int -> int =
   let with_random_int = Array.init n @@ fun i -> Random.bits (), i in
-  Array.sort (fun (a,_) (b,_) -> compare a b) with_random_int;
+  Array.fast_sort (fun (a,_) (b,_) -> compare a b) with_random_int;
   fun i -> snd with_random_int.(i)
 
 (* Generates a matrix with 3 rows and M columns. Each column represents an edge
    as the vector (start vertex, end vertex, weight). *)
-let kronecker scale edge_factor : (vertex * vertex * weight) array =
+let kronecker ~pool ~scale ~edge_factor : (vertex * vertex * weight) array =
   let n, m = compute_number scale edge_factor in
   let a, b, c = (0.57, 0.19, 0.19) in
   let ab = a +. b in
   let c_norm = c /. (1. -. (a +. b)) in
   let a_norm = a /. (a +. b) in
-  let fst_row, snd_row, weights = compute_ijw m ab a_norm c_norm scale in
+  let fst_row, snd_row, weights = compute_ijw ~pool m ab a_norm c_norm scale in
   (* Switch from edge labels starting at 1 to edge labels starting at 0 *)
   let fst_row = Array.map pred fst_row in
   let snd_row = Array.map pred snd_row in
@@ -88,8 +84,8 @@ let kronecker scale edge_factor : (vertex * vertex * weight) array =
   (* Permute edges *)
   permute edges
 
-let go ~scale ~edge_factor =
-  kronecker scale edge_factor
+let go ~pool ~scale ~edge_factor =
+  kronecker ~pool ~scale ~edge_factor
 
 let to_file ~filename (edges : edge array) =
   let out = open_out filename in
@@ -102,5 +98,5 @@ let from_file filename =
   close_in in_;
   res
 
-let generate_to_file ~scale ~edge_factor ~filename =
-  go ~scale ~edge_factor |> to_file ~filename
+let generate_to_file ~pool ~scale ~edge_factor ~filename =
+  go ~pool ~scale ~edge_factor |> to_file ~filename

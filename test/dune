@@ -1,10 +1,4 @@
 (test
-  (name kernel1Seq)
-  (modules kernel1Seq)
-  (libraries types generate kernel1Seq qcheck unix)
-)
-
-(test
   (name kernel1Par)
   (modules kernel1Par)
   (libraries types generate kernel1Par qcheck unix domainslib)
