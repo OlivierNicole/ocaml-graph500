@@ -1,5 +1,7 @@
 Parallel implementation of the [Graph500
-benchmark](https://graph500.org/?page_id=12) in OCaml.
+benchmark](https://graph500.org/?page_id=12) in OCaml. It is adapted from the
+[Sandmark graph500seq benchmark](https://github.com/ocaml-bench/sandmark/tree/7cc037472ab67991ef63be6c4e3f6cf83136b120/benchmarks/graph500seq)
+with a number of optimizations.
 
 ## Usage
 
