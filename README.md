@@ -33,4 +33,4 @@ There is a number of test executables:
   and 2 on it in sequence, with some printing and validation of the results. It
   takes a number of parameters, including the number of domains.
 
-New implementations of kernels 2 and 3 have been proposed by Moazzam Moriani (@moazzammoriani) for the OCaml Sandmark benchmark suite at https://github.com/ocaml-bench/sandmark/pull/388.
+New implementations of kernels 2 and 3 have been proposed by [Moazzam Moriani](https://github.com/moazzammoriani) for the OCaml Sandmark benchmark suite at https://github.com/ocaml-bench/sandmark/pull/388.
